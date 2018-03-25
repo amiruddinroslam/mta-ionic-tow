@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-navbar color="primary">
+    <ion-buttons start>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
+    <ion-title>
+      Mobile Tow Assist
+    </ion-title>
+  </ion-navbar>
+  <ion-searchbar [(ngModel)]="autocomplete.input" (ionInput)="updateSearchResults()" placeholder="Search for a place"></ion-searchbar>
+</ion-header>
+  
+<ion-content>
+  <ion-list [hidden]="autocompleteItems.length == 0">
+    <ion-item *ngFor="let item of autocompleteItems" tappable (click)="selectSearchResult(item)">
+      {{ item.description }}
+    </ion-item>
+  </ion-list>
+    <div #map id="map"></div>
+</ion-content>
+
+<ion-footer>
+  <button class="request-btn" ion-button full (click)="onRequest()" *ngIf="!isHelpRequested">Request for Help</button>
+  <button class="request-btn" ion-button full color="danger" (click)="onCancel()" *ngIf="isHelpRequested">Cancel Request</button> 
+</ion-footer>
