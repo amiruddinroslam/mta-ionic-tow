@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "381071599550",
+    "firebase_url": "https://mobiletowassist-197104.firebaseio.com",
+    "project_id": "mobiletowassist-197104",
+    "storage_bucket": "mobiletowassist-197104.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:381071599550:android:45d7f6a6728dced7",
+        "android_client_info": {
+          "package_name": "com.amiruddin.mtatow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "381071599550-9r990grh8aptqrdvilh1s8t7eoa5ddb9.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEnVp4MI7ZK07ImqO8QCAK_-DkiA-C2SI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

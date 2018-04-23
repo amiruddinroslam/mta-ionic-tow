@@ -8,10 +8,20 @@
 
 
 <ion-content padding>
-	<ion-list-header>
-		Tow requsts near you.
-	</ion-list-header>
+	<!-- <ion-list>
+		<button ion-item text-wrap *ngFor="let requestLocation of locationUserid" (click)="onSelectRequest(requestLocation.userid, requestLocation.towid, requestLocation.location, requestLocation.timeDate)">
+			<ion-icon name="pin" item-start></ion-icon>
+			{{ requestLocation.location }}
+			<br>
+			<span><ion-icon name="time" item-start></ion-icon>{{ requestLocation.timeDate }}</span>
+		</button>
+	</ion-list> -->
 	<ion-list>
-		<ion-item></ion-item>
+		<button ion-item text-wrap *ngFor="let towRequest of towRequestKey | async" (click)="onSelect(towRequest.userId, towRequest.key, towRequest.originLat, towRequest.originLng, towRequest.timeDate)">
+			<ion-icon name="pin" item-start></ion-icon>
+			Tow ID: {{ towRequest.key }}
+			<br>
+			<span><ion-icon name="time" item-start></ion-icon>{{ towRequest.timeDate }}</span>
+		</button>
 	</ion-list>
 </ion-content>
