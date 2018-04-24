@@ -8,7 +8,6 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ProfilePage } from '../pages/profile/profile';
-import { VehiclePage } from '../pages/vehicle/vehicle';
 import { NearbyWorkshopPage } from '../pages/nearby-workshop/nearby-workshop';
 import { TowRequestPage } from '../pages/tow-request/tow-request';
 import { TowRequestConfirmationPage } from '../pages/tow-request/tow-request-confirmation/towRequestConfirmation';
@@ -22,7 +21,6 @@ import { TowRequestsService } from '../services/towRequests';
 //native
 import { Geolocation } from '@ionic-native/geolocation'; 
 import { Device } from '@ionic-native/device';
-//import { BackgroundGeolocation } from '@ionic-native/background-geolocation';
 
 //firebase
 import { AngularFireModule } from 'angularfire2';
@@ -38,7 +36,6 @@ import { Firebase } from '@ionic-native/firebase';
     HomePage,
     TabsPage,
     ProfilePage,
-    VehiclePage,
     NearbyWorkshopPage,
     TowRequestPage,
     TowRequestConfirmationPage
@@ -57,7 +54,6 @@ import { Firebase } from '@ionic-native/firebase';
     HomePage,
     TabsPage,
     ProfilePage,
-    VehiclePage,
     NearbyWorkshopPage,
     TowRequestPage,
     TowRequestConfirmationPage
@@ -73,7 +69,6 @@ import { Firebase } from '@ionic-native/firebase';
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     Firebase,
     Device
-    //BackgroundGeolocation
   ]
 })
 export class AppModule {}

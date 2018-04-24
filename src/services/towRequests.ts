@@ -36,6 +36,6 @@ export class TowRequestsService {
 
     updatePickupFlag(key, uid) {
         let pickupFlg = this.db.object('towRequest/'+key);
-        pickupFlg.update({ "pickup_flag": 1, "driverId": uid});
+        pickupFlg.update({ "pickup_flag": 1, "driverId": uid, "status": "tow_assigned"});
     }
 }

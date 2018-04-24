@@ -6,22 +6,22 @@
       </button>
     </ion-buttons>
     <ion-title>
-      Mobile Tow Assist
+      Pick Up Customer
     </ion-title>
   </ion-navbar>
-  <ion-searchbar [(ngModel)]="autocomplete.input" (ionInput)="updateSearchResults()" placeholder="Search for a place"></ion-searchbar>
+  <!-- <ion-searchbar [(ngModel)]="autocomplete.input" (ionInput)="updateSearchResults()" placeholder="Search for a place"></ion-searchbar> -->
 </ion-header>
   
 <ion-content>
-  <ion-list [hidden]="autocompleteItems.length == 0">
+  <!-- <ion-list [hidden]="autocompleteItems.length == 0">
     <ion-item *ngFor="let item of autocompleteItems" tappable (click)="selectSearchResult(item)">
       {{ item.description }}
     </ion-item>
-  </ion-list>
+  </ion-list> -->
     <div #map id="map"></div>
 </ion-content>
-<!-- 
+
 <ion-footer>
-  <button class="request-btn" ion-button full (click)="onRequest()" *ngIf="!isHelpRequested">Request for Help</button>
-  <button class="request-btn" ion-button full color="danger" (click)="onCancel()" *ngIf="isHelpRequested">Cancel Request</button> 
-</ion-footer> -->
+  <button class="request-btn" ion-button full (click)="pickupCar()" *ngIf="!isArrived" [hidden]="isArrived">Arrive at User Location</button>
+  <button class="request-btn" ion-button full color="primary" (click)="complete()" *ngIf="!isCompleted">Arrive at Workshop</button>
+</ion-footer>

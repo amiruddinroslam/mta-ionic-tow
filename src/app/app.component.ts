@@ -6,7 +6,6 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { TabsPage } from '../pages/tabs/tabs';
 import { HomePage } from '../pages/home/home';
 import { ProfilePage } from '../pages/profile/profile';
-import { VehiclePage } from '../pages/vehicle/vehicle';
 import { LoginPage } from '../pages/login/login';
 // import { tap } from 'rxjs/operators';
 // import { FCM } from '@ionic-native/fcm';
@@ -21,7 +20,6 @@ export class MyApp {
   rootPage:any = LoginPage;
   homePage = HomePage;
   profilePage = ProfilePage;
-  vehiclePage = VehiclePage;
   tabsPage = TabsPage;
 
   constructor(platform: Platform, statusBar: StatusBar, splashScreen: SplashScreen, private menuCtrl: MenuController) {

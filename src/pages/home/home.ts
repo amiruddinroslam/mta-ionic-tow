@@ -1,25 +1,15 @@
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
-import { LoadingController, NavParams } from 'ionic-angular';
-import { Geolocation } from '@ionic-native/geolocation';
+import { LoadingController, NavParams, AlertController, NavController } from 'ionic-angular';
+import { Geolocation, Geoposition } from '@ionic-native/geolocation';
 import { Device } from '@ionic-native/device';
 import { Observable } from 'rxjs/Observable';
 import * as firebase from 'firebase/app';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase, AngularFireObject } from 'angularfire2/database';
+import 'rxjs/add/operator/filter';
+import { WorkshopMapPage } from '../workshop-map/workshop-map';
 
 declare var google: any;
-
-export const snapshotToArray = snapshot => {
-    let returnArr = [];
-
-    snapshot.forEach(childSnapshot => {
-        let item = childSnapshot.val();
-        item.key = childSnapshot.key;
-        returnArr.push(item);
-    });
-
-    return returnArr;
-};
 
 @Component({
   selector: 'page-home',
@@ -39,6 +29,8 @@ export class HomePage implements OnInit{
 	GoogleAutocomplete: any;
 	geocoder: any;
 	markers = [];
+	userMarker: any;
+	workshopMarker: any;
 
 	mapOpt : {
 			enableHighAccuracy: true,
@@ -54,13 +46,18 @@ export class HomePage implements OnInit{
 	userObjRef: AngularFireObject<any>;
 	userObj: Observable<any>;
 
-	isHelpRequested = false;
+	towRequestRef: AngularFireObject<any>;
+	towRequest: Observable<any>;
+
+	isArrived = false;
+	isCompleted = false;
 
 	constructor(private ngZone: NgZone, private geolocation: Geolocation, private loadingCtrl: LoadingController,
-				private device: Device, private afAuth: AngularFireAuth, private navParams: NavParams, private db: AngularFireDatabase) {
+				private device: Device, private afAuth: AngularFireAuth, private navParams: NavParams, private db: AngularFireDatabase,
+				private alertCtrl: AlertController, private navCtrl: NavController) {
 		this.towRequestId = this.navParams.get('towRequestId');
 		this.userId = this.navParams.get('userId');
-		console.log(this.towRequestId, this.userId);
+
 		//google autocomplete
 		this.GoogleAutocomplete = new google.maps.places.AutocompleteService();
 		this.autocomplete = { input: '' };
@@ -85,6 +82,10 @@ export class HomePage implements OnInit{
 		this.userObj = this.userObjRef.valueChanges();
 		this.getUserLocation();
 
+		//get tow request
+		this.towRequestRef = this.db.object(`towRequest/${this.towRequestId}`);
+    	this.towRequest = this.towRequestRef.valueChanges();
+
 	}
 
 	getTowLocation() {
@@ -100,17 +101,31 @@ export class HomePage implements OnInit{
 
 	getUserLocation() {
 		this.userObj.subscribe(response => {
-			console.log(response);
-			this.deleteMarkers();
+			//this.deleteMarkers();
 			let image = 'assets/imgs/person-icon.png';
 			let updatelocation = new google.maps.LatLng(response.latitude, response.longitude);
 
-			let marker = new google.maps.Marker({
+			this.userMarker = new google.maps.Marker({
 				position: updatelocation,
 				map: this.map,
 				icon: image
 			});
-			marker.setMap(this.map);
+			this.userMarker.setMap(this.map);
+		});
+	}
+
+	getWorkshopLocation() {
+		this.towRequest.subscribe(response => {
+			console.log(response)
+			let image = 'assets/imgs/person-icon.png';
+			let updatelocation = new google.maps.LatLng(response.destLat, response.destLng);
+			this.map.panTo(updatelocation);
+			this.userMarker = new google.maps.Marker({
+				position: updatelocation,
+				map: this.map,
+				icon: image
+			});
+			this.userMarker.setMap(this.map);
 		});
 	}
 
@@ -134,6 +149,12 @@ export class HomePage implements OnInit{
 				center: towLocation,
 				disableDefaultUI: true
 			});
+
+			this.deleteMarkers();
+			this.updateGeolocation(this.device.uuid, response.coords.latitude,response.coords.longitude);
+			let image = 'assets/img/truck-icon.png';
+			this.addMarker(towLocation, image);
+			this.setMapOnAll(this.map);
 		}, error => {
 			loading.dismiss();
 			this.initMapError(error);
@@ -146,10 +167,11 @@ export class HomePage implements OnInit{
 		};
 
 		let watch = this.geolocation.watchPosition(options);
-		watch.subscribe(data => {
+		watch.filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
+			console.log(position);
 			this.deleteMarkers();
-			this.updateGeolocation(this.device.uuid, data.coords.latitude,data.coords.longitude);
-			let updateTowLocation = new google.maps.LatLng(data.coords.latitude, data.coords.longitude);
+			this.updateGeolocation(this.device.uuid, position.coords.latitude,position.coords.longitude);
+			let updateTowLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
 			let image = 'assets/img/truck-icon.png';
 			this.addMarker(updateTowLocation, image);
 			this.setMapOnAll(this.map);
@@ -168,6 +190,7 @@ export class HomePage implements OnInit{
 			icon: image
 		});
 		this.markers.push(marker);
+		console.log(this.markers);
 	}
 
 	private setMapOnAll(map) {
@@ -177,6 +200,7 @@ export class HomePage implements OnInit{
 	}
 
 	private clearMarkers() {
+		console.log('clear markers');
 		this.setMapOnAll(null);
 	}
 
@@ -208,45 +232,34 @@ export class HomePage implements OnInit{
 		}
 	}
 
-	updateSearchResults() {
-		if (this.autocomplete.input == '') {
-			this.autocompleteItems = [];
-			return;
-		}
-		this.GoogleAutocomplete.getPlacePredictions({ input: this.autocomplete.input },
-			(predictions, status) => {
-				this.autocompleteItems = [];
-				this.ngZone.run(() => {
-					predictions.forEach((prediction) => {
-						this.autocompleteItems.push(prediction);
-					});
-				});
-  		});
-	}
+	pickupCar() {
+		//console.log('arrived');
+		this.isArrived = true;
+		const alert = this.alertCtrl.create({
+			title: 'Confirmation',
+			message: "Confirm that you arrived at user's location?",
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel'
+				},
+				{
+					text: 'Yes',
+					handler: () => {
+						//this.navCtrl.push(WorkshopMapPage, this.towRequestId);
+						this.userMarker.setMap(null);
+						this.getWorkshopLocation();
+					}
+				}
 
-	selectSearchResult(item){
-		this.clearMarkers();
-		this.autocompleteItems = [];
-
-		this.geocoder.geocode({'placeId': item.place_id}, (results, status) => {
-			if(status === 'OK' && results[0]){
-		        let marker = new google.maps.Marker({
-		        	position: results[0].geometry.location,
-		        	map: this.map
-		        });
-		        this.markers.push(marker);
-		        this.map.setCenter(results[0].geometry.location);
-	    	}
+			]
 		});
+		alert.present();
 	}
 
-	onRequest() {
-		console.log('requested');
-		this.isHelpRequested = true;
-	}
-
-	onCancel() {
-		this.isHelpRequested = false;
+	complete() {
+		this.isCompleted = true;
+		
 	}
   	
 }
