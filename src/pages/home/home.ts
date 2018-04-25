@@ -77,10 +77,9 @@ export class HomePage implements OnInit{
 			console.log('error no uid');
 		}
 
-		//get user
-		this.userObjRef = this.db.object('geolocations/'+this.userId);
-		this.userObj = this.userObjRef.valueChanges();
-		this.getUserLocation();
+		// //get user
+		// this.userObjRef = this.db.object('geolocations/'+this.userId);
+		// this.userObj = this.userObjRef.valueChanges();
 
 		//get tow request
 		this.towRequestRef = this.db.object(`towRequest/${this.towRequestId}`);
@@ -90,7 +89,7 @@ export class HomePage implements OnInit{
 
 	getTowLocation() {
 		this.towObj.subscribe(response => {
-			console.log(response);
+			console.log('getTowLocation');
 			this.deleteMarkers();
 			let image = 'assets/imgs/truck-icon.png';
 			let updatelocation = new google.maps.LatLng(response.latitude, response.longitude);
@@ -100,11 +99,12 @@ export class HomePage implements OnInit{
 	}
 
 	getUserLocation() {
-		this.userObj.subscribe(response => {
+		this.towRequest.subscribe(response => {
+			console.log('getUserLocation');
 			//this.deleteMarkers();
 			let image = 'assets/imgs/person-icon.png';
-			let updatelocation = new google.maps.LatLng(response.latitude, response.longitude);
-
+			let updatelocation = new google.maps.LatLng(response.originLat, response.originLng);
+			this.map.panTo(updatelocation);
 			this.userMarker = new google.maps.Marker({
 				position: updatelocation,
 				map: this.map,
@@ -116,16 +116,16 @@ export class HomePage implements OnInit{
 
 	getWorkshopLocation() {
 		this.towRequest.subscribe(response => {
-			console.log(response)
-			let image = 'assets/imgs/person-icon.png';
+			console.log('getWorkshopLocation');
+			//let image = 'assets/imgs/person-icon.png';
 			let updatelocation = new google.maps.LatLng(response.destLat, response.destLng);
 			this.map.panTo(updatelocation);
-			this.userMarker = new google.maps.Marker({
+			this.workshopMarker = new google.maps.Marker({
 				position: updatelocation,
-				map: this.map,
-				icon: image
+				map: this.map
+				//icon: image
 			});
-			this.userMarker.setMap(this.map);
+			this.workshopMarker.setMap(this.map);
 		});
 	}
 
@@ -168,7 +168,7 @@ export class HomePage implements OnInit{
 
 		let watch = this.geolocation.watchPosition(options);
 		watch.filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
-			console.log(position);
+			console.log('watchPosition', position);
 			this.deleteMarkers();
 			this.updateGeolocation(this.device.uuid, position.coords.latitude,position.coords.longitude);
 			let updateTowLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
@@ -184,23 +184,24 @@ export class HomePage implements OnInit{
 	}
 
 	private addMarker(location, image) {
+		console.log('addMarker')
 		let marker = new google.maps.Marker({
 			position: location,
 			map: this.map,
 			icon: image
 		});
 		this.markers.push(marker);
-		console.log(this.markers);
 	}
 
 	private setMapOnAll(map) {
+		console.log('setMapOnAll')
 		this.markers.forEach(marker => {
 			marker.setMap(map);
 		})
 	}
 
 	private clearMarkers() {
-		console.log('clear markers');
+		console.log('clearMarkers');
 		this.setMapOnAll(null);
 	}
 
@@ -210,6 +211,7 @@ export class HomePage implements OnInit{
 	}
 
 	updateGeolocation(uuid, lat, lng) {
+		console.log('updateGeolocation')
 		if(localStorage.getItem('mykey')) {
 			this.afAuth.authState.subscribe(auth => {
 				firebase.database().ref(`geolocations/${auth.uid}`).set({
@@ -235,6 +237,20 @@ export class HomePage implements OnInit{
 	pickupCar() {
 		//console.log('arrived');
 		this.isArrived = true;
+
+		const alertPickup = this.alertCtrl.create({
+			title: "Pick up customer's vehicle",
+			message: "confirm that you have pick up customer's vehicle?",
+			buttons: [
+			  {
+				text: 'Yes',
+				handler: () => {
+				  this.towRequestRef.update({"status": "picked_up"});
+				}
+			  }
+			]
+		  });
+
 		const alert = this.alertCtrl.create({
 			title: 'Confirmation',
 			message: "Confirm that you arrived at user's location?",
@@ -246,20 +262,31 @@ export class HomePage implements OnInit{
 				{
 					text: 'Yes',
 					handler: () => {
-						//this.navCtrl.push(WorkshopMapPage, this.towRequestId);
-						this.userMarker.setMap(null);
+						//this.userMarker.setMap(null);
 						this.getWorkshopLocation();
+						this.towRequestRef.update({"status": "arrived_at_user"});
+						this.towRequest.subscribe(res => {
+							if(res.status == "arrived_at_user") {
+								alertPickup.present();
+							}
+						}).unsubscribe();
 					}
 				}
 
 			]
 		});
+		
 		alert.present();
+		
 	}
 
 	complete() {
 		this.isCompleted = true;
-		
+		this.towRequestRef.update({"status": "arrived_at_workshop"});
+		// this.towRequest.subscribe(response => {
+
+		// });
+
 	}
   	
 }
