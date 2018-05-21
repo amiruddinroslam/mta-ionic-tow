@@ -1,0 +1,14 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Tow History</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding>
+  <ion-list>
+    <button ion-item *ngFor="let tow of towReq | async; let i = index" (click)="detail(tow.key)"><ion-icon name="time" item-start></ion-icon>{{ tow.timeDate }}</button>
+  </ion-list>
+</ion-content>

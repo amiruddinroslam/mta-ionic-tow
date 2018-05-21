@@ -1,8 +1,7 @@
-<!-- -->
-<ion-content padding class="animated fadeIn login auth-page">
+<!-- <ion-content padding class="animated fadeIn login auth-page">
   <div class="login-content">
 
-    <!-- Logo -->
+
     <div padding-horizontal text-center class="animated fadeInDown">
       <div class="logo"></div>
       <h2 ion-text class="text-primary">
@@ -10,7 +9,6 @@
       </h2>
     </div>
 
-    <!-- Login form -->
     <form class="list-form" #f="ngForm" (ngSubmit)="onLogin(f)">
       <ion-item>
         <ion-label floating>
@@ -29,7 +27,7 @@
       </ion-item>
       <br>
       
-      <button ion-button icon-start block color="dark" typr="submit" [disabled]="!f.valid">
+      <button ion-button icon-start block color="dark" type="submit" [disabled]="!f.valid">
         <ion-icon name="log-in"></ion-icon>
         SIGN IN
       </button>
@@ -63,11 +61,50 @@
 
     </div>
 
-
-    <!-- Other links -->
     <div text-center margin-top>
       <span ion-text color="secondary" tappable (click)="onRegister()">New here? <strong>Sign up</strong></span>
     </div>
 
   </div>
+</ion-content> -->
+
+<ion-content>
+ 
+  <div padding [@flyInBottomFast]="cloudState" id="cloud-layer">
+ 
+    <ion-row>
+      <ion-col>
+        <div class="logo" [@flyInBottomSlow]="logoState"></div>
+        <h2 ion-text class="text-black">
+          <strong>Mobile</strong> Tow Assist
+        </h2>
+        <small><i>For Tow Service Provider</i></small>
+      </ion-col>
+    </ion-row>
+
+  <form #f="ngForm" (ngSubmit)="onLogin(f)">
+    <ion-row>
+      <ion-col>
+        <ion-list inset [@bounceInBottom]="formState">
+            <ion-item>
+              <ion-label>Email</ion-label>
+              <ion-input type="email" ngModel name="email" required></ion-input>
+            </ion-item>
+   
+            <ion-item>
+              <ion-label>Password</ion-label>
+              <ion-input type="password" ngModel name="password" required></ion-input>
+            </ion-item>
+        </ion-list>
+      </ion-col>
+    </ion-row>
+ 
+    <ion-row>
+      <ion-col>
+        <button ion-button class="login-button" [@fadeIn]="loginState" type="submit" [disabled]="!f.valid">Login</button>
+      </ion-col>
+    </ion-row>
+  </form>
+  </div>
+ 
 </ion-content>

@@ -1,3 +1,4 @@
+import { PaymentPage } from './../payment/payment';
 import { Component, OnInit, ViewChild, ElementRef, NgZone } from '@angular/core';
 import { LoadingController, NavParams, AlertController, NavController } from 'ionic-angular';
 import { Geolocation, Geoposition } from '@ionic-native/geolocation';
@@ -22,6 +23,7 @@ export class HomePage implements OnInit{
 	
 	towRequestId: string;
 	userId: string;
+	userTow: string;
 
 	map: any;
 	autocompleteItems: any;
@@ -67,10 +69,10 @@ export class HomePage implements OnInit{
 		this.geocoder = new google.maps.Geocoder;
 
 		//get tow user
-		let userTow = firebase.auth().currentUser;
-		if(userTow) {
-			console.log(userTow.uid);
-			this.towObjRef = this.db.object('geolocations/'+userTow.uid);
+		this.userTow = firebase.auth().currentUser.uid;
+		if(this.userTow) {
+			console.log(this.userTow);
+			this.towObjRef = this.db.object('geolocations/'+this.userTow);
 			this.towObj = this.towObjRef.valueChanges();
 			this.getTowLocation();
 		} else {
@@ -78,12 +80,13 @@ export class HomePage implements OnInit{
 		}
 
 		// //get user
-		// this.userObjRef = this.db.object('geolocations/'+this.userId);
-		// this.userObj = this.userObjRef.valueChanges();
-
+		this.userObjRef = this.db.object('geolocations/'+this.userId);
+		this.userObj = this.userObjRef.valueChanges();
+		
 		//get tow request
 		this.towRequestRef = this.db.object(`towRequest/${this.towRequestId}`);
     	this.towRequest = this.towRequestRef.valueChanges();
+		
 
 	}
 
@@ -100,17 +103,15 @@ export class HomePage implements OnInit{
 
 	getUserLocation() {
 		this.towRequest.subscribe(response => {
-			console.log('getUserLocation');
-			//this.deleteMarkers();
+			console.log('getUserLocation', response.originLat, response.originLng);
 			let image = 'assets/imgs/person-icon.png';
 			let updatelocation = new google.maps.LatLng(response.originLat, response.originLng);
-			this.map.panTo(updatelocation);
 			this.userMarker = new google.maps.Marker({
 				position: updatelocation,
 				map: this.map,
 				icon: image
 			});
-			this.userMarker.setMap(this.map);
+      		this.userMarker.setMap(this.map);
 		});
 	}
 
@@ -131,6 +132,7 @@ export class HomePage implements OnInit{
 
 	ngOnInit() {
 		this.initMap();
+		//this.getUserLocation();
 	}
 
 	initMap() {
@@ -150,9 +152,23 @@ export class HomePage implements OnInit{
 				disableDefaultUI: true
 			});
 
+			this.towRequest.subscribe(response => {
+				console.log('getUserLocation', response.originLat, response.originLng);
+				let image = 'assets/imgs/person-icon.png';
+				let updatelocation = new google.maps.LatLng(response.originLat, response.originLng);
+				this.userMarker = new google.maps.Marker({
+					position: updatelocation,
+					map: this.map,
+					icon: image
+				});
+				  this.userMarker.setMap(this.map);
+				  this.map.setCenter(updatelocation);
+			});
+
+
 			this.deleteMarkers();
-			this.updateGeolocation(this.device.uuid, response.coords.latitude,response.coords.longitude);
-			let image = 'assets/img/truck-icon.png';
+			this.updateGeolocation(response.coords.latitude,response.coords.longitude);
+			let image = 'assets/imgs/truck-icon.png';
 			this.addMarker(towLocation, image);
 			this.setMapOnAll(this.map);
 		}, error => {
@@ -170,9 +186,9 @@ export class HomePage implements OnInit{
 		watch.filter((p: any) => p.code === undefined).subscribe((position: Geoposition) => {
 			console.log('watchPosition', position);
 			this.deleteMarkers();
-			this.updateGeolocation(this.device.uuid, position.coords.latitude,position.coords.longitude);
+			this.updateGeolocation(position.coords.latitude,position.coords.longitude);
 			let updateTowLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-			let image = 'assets/img/truck-icon.png';
+			let image = 'assets/imgs/truck-icon.png';
 			this.addMarker(updateTowLocation, image);
 			this.setMapOnAll(this.map);
 		});
@@ -210,33 +226,16 @@ export class HomePage implements OnInit{
 		this.markers = [];
 	}
 
-	updateGeolocation(uuid, lat, lng) {
+	updateGeolocation(lat, lng) {
 		console.log('updateGeolocation')
-		if(localStorage.getItem('mykey')) {
-			this.afAuth.authState.subscribe(auth => {
-				firebase.database().ref(`geolocations/${auth.uid}`).set({
-					uuid: uuid,
-					latitude: lat,
-					longitude: lng
-				});
-			});
-		} else {
-			this.afAuth.authState.subscribe(auth => {
-				let newData = firebase.database().ref(`geolocations/${auth.uid}`);
-				newData.set({
-					uuid: uuid,
-					latitude: lat,
-					longitude: lng
-				});
-				localStorage.setItem('mykey', auth.uid);
-			});
-			
-		}
+		firebase.database().ref(`geolocations/${this.userTow}`).set({
+			latitude: lat,
+			longitude: lng
+		});
 	}
 
 	pickupCar() {
 		//console.log('arrived');
-		this.isArrived = true;
 
 		const alertPickup = this.alertCtrl.create({
 			title: "Pick up customer's vehicle",
@@ -262,14 +261,9 @@ export class HomePage implements OnInit{
 				{
 					text: 'Yes',
 					handler: () => {
-						//this.userMarker.setMap(null);
+						this.isArrived = true;
 						this.getWorkshopLocation();
 						this.towRequestRef.update({"status": "arrived_at_user"});
-						this.towRequest.subscribe(res => {
-							if(res.status == "arrived_at_user") {
-								alertPickup.present();
-							}
-						}).unsubscribe();
 					}
 				}
 
@@ -277,15 +271,42 @@ export class HomePage implements OnInit{
 		});
 		
 		alert.present();
+
+		this.towRequest.subscribe(res => {
+			if(res.status == "arrived_at_user") {
+				setTimeout(()=> { alertPickup.present(); }, 2500);
+				// alertPickup.present();
+			}
+		});
 		
 	}
 
 	complete() {
-		this.isCompleted = true;
-		this.towRequestRef.update({"status": "arrived_at_workshop"});
-		// this.towRequest.subscribe(response => {
+		
+		const alert = this.alertCtrl.create({
+			title: 'Confirmation',
+			message: "Confirm that you arrived at workshop location?",
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel'
+				},
+				{
+					text: 'Yes',
+					handler: () => {
+						this.isCompleted = true;
+						this.towRequestRef.update({"status": "arrived_at_workshop"});
+					}
+				}
 
-		// });
+			]
+		});
+		alert.present();
+		this.towRequest.subscribe(res => {
+			if(res.status == "completed") {
+				this.navCtrl.push(PaymentPage, {"key": this.towRequestId});
+			}
+		});
 
 	}
   	

@@ -1,9 +1,11 @@
+import { PaymentPage } from './../pages/payment/payment';
 import { LoginPage } from './../pages/login/login';
 import { TowRequest } from './../models/towRequest';
 import { NgModule, ErrorHandler } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { HomePage } from '../pages/home/home';
 import { TabsPage } from '../pages/tabs/tabs';
@@ -26,8 +28,11 @@ import { Device } from '@ionic-native/device';
 import { AngularFireModule } from 'angularfire2';
 import { AngularFireDatabaseModule, AngularFireDatabase } from 'angularfire2/database';
 import { AngularFireAuthModule } from 'angularfire2/auth';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { credentials } from './config';
 import { Firebase } from '@ionic-native/firebase';
+import { FcmProvider } from '../providers/fcm/fcm';
+import { HistoryPage } from '../pages/history/history';
 
 @NgModule({
   declarations: [
@@ -38,14 +43,18 @@ import { Firebase } from '@ionic-native/firebase';
     ProfilePage,
     NearbyWorkshopPage,
     TowRequestPage,
-    TowRequestConfirmationPage
+    TowRequestConfirmationPage,
+    PaymentPage,
+    HistoryPage
   ],
   imports: [
     BrowserModule,
     IonicModule.forRoot(MyApp),
     AngularFireModule.initializeApp(credentials.firebase),
+    AngularFirestoreModule.enablePersistence(),
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    BrowserAnimationsModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -56,7 +65,9 @@ import { Firebase } from '@ionic-native/firebase';
     ProfilePage,
     NearbyWorkshopPage,
     TowRequestPage,
-    TowRequestConfirmationPage
+    TowRequestConfirmationPage,
+    PaymentPage,
+    HistoryPage
   ],
   providers: [
     StatusBar,
@@ -68,7 +79,8 @@ import { Firebase } from '@ionic-native/firebase';
     TowRequest,
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     Firebase,
-    Device
+    Device,
+    FcmProvider
   ]
 })
 export class AppModule {}

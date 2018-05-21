@@ -3,16 +3,12 @@
 		<ion-toolbar class="user-profile">
 			<ion-grid>
 				<ion-row>
-					<ion-col col-4>
-						<div class="user-avatar">
-							<img src="">
-						</div>
-					</ion-col>
 					<ion-col padding-top col-8>
-						<h2 ion-text class="no-margin bold text-white">
-							João Firmino
-						</h2>
-						<span ion-text color="light">Customer</span>
+						<h5 ion-text class="no-margin bold text-white">
+							{{ (user | async)?.companyName }}
+						</h5>
+						<span ion-text color="light">{{ (user | async)?.towTruckPlateNo }}</span>
+						<p ion-text color="light">Towing Service Provider</p>
 					</ion-col>
 				</ion-row>
 
@@ -34,17 +30,9 @@
 				<ion-icon item-left color="primary" name="home"></ion-icon>
 				 Home
 			</button>
-			<button ion-item menuClose class="text-1x" (click)="onLoad(profilePage)">
-				<ion-icon item-left color="primary" name="contact"></ion-icon>
-				 Profile
-			</button>
-			<button ion-item menuClose class="text-1x" (click)="onLoad(vehiclePage)">
-				<ion-icon item-left color="primary" name="car"></ion-icon>
-				 Vehicle
-			</button>
-			<button ion-item menuClose class="text-1x" (click)="onLoad(loginPage)">
-				<ion-icon item-left color="primary" name="log-in"></ion-icon>
-				 Login
+			<button ion-item menuClose class="text-1x" (click)="onLoad(historyPage)">
+				<ion-icon item-left color="primary" name="list"></ion-icon>
+				 Tow History
 			</button>
 		</ion-list>
 	</ion-content>

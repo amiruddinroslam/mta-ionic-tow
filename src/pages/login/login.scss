@@ -1,3 +1,67 @@
-page-login {
+.ios, .md {
+ 
+    page-login {
 
-}
+      .logo {
+        width: 180px;
+        height: 180px;
+        margin: 5px auto 0;
+        border-radius: 10%;
+        background: url("../assets/imgs/MTA-tow-logo.png") no-repeat;
+        background-size: 100%;
+      }
+   
+      .scroll-content {
+        background-color: #488aff;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .bg {
+        background: url(../assets/imgs/bg-mta-tow.png);
+        background-size: cover;
+      }
+   
+      img {
+        width: 50%;
+        height: auto;
+        margin: 0 auto;
+      }
+   
+      #cloud-layer {
+        background-image: url(../assets/imgs/bg-mta-tow.png);
+        background-size: cover;
+        width: 100%;
+        height: 100%;
+      }
+   
+        ion-row {
+          align-items: center;
+          text-align: center;
+        }
+   
+        ion-item {
+            border-radius: 30px !important;
+            padding-left: 10px !important;
+            margin-bottom: 10px;
+            background-color: #f6f6f6;
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+   
+        ion-list {
+            margin: 0;
+        }
+   
+        .login-button {
+            width: 100%;
+            border-radius: 30px;
+            font-size: 0.9em;
+            border: 1px solid #fff;
+            background-color: #3667bb;
+        }
+   
+    }
+   
+  }

@@ -102,7 +102,7 @@ export class TowRequestConfirmationPage {
         this.afAuth.authState.subscribe(auth => {
             this.towRequestService.updatePickupFlag(this.towRequestId, auth.uid);
         })
-        this.navCtrl.push(HomePage, {"userId": userId, "towRequestId": this.towRequestId});
+        this.navCtrl.setRoot(HomePage, {"userId": userId, "towRequestId": this.towRequestId});
         
     }
 }

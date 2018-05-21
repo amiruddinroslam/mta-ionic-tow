@@ -1,0 +1,42 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <ion-title>Payment</ion-title>
+  </ion-navbar>
+
+</ion-header>
+<ion-content padding>
+  <ion-card>
+    <ion-card-header>
+      Total Charges
+    </ion-card-header>
+    <ion-list>
+      <button ion-item>
+        <ion-icon name="repeat"></ion-icon>
+        Distance
+        <strong text-right>{{ totalDistance }}</strong>
+      </button>
+    </ion-list>
+    <ion-list>
+      <button ion-item>
+        <ion-icon name="pricetag"></ion-icon>
+        Rate Per Kilometer
+        <strong text-right>RM 15/KM</strong>
+      </button>
+    </ion-list>
+    <ion-list>
+        <button ion-item>
+          <ion-icon name="cash"></ion-icon>
+          Total
+          <strong text-right>RM {{ totalPrice }}</strong>
+        </button>
+      </ion-list>
+  </ion-card>
+  <ion-grid>
+    <ion-row>
+      <ion-col>
+          <button ion-button full color="success" (click)="paid()">Customer Paid</button>
+        </ion-col>
+    </ion-row>
+  </ion-grid>
+</ion-content>

@@ -1,3 +1,4 @@
+import { FcmProvider } from './../../providers/fcm/fcm';
 import { Component } from '@angular/core';
 
 import { HomePage } from '../home/home';
@@ -11,7 +12,7 @@ export class TabsPage {
   tab1Root = TowRequestPage;
   tab2Root = HomePage;
 
-  constructor() {
-
+  constructor(private fcm: FcmProvider) {
+    // fcm.getToken();
   }
 }
