@@ -99,6 +99,7 @@ export class TowRequestConfirmationPage {
     }
 
     onAccept(userId) {
+        this.viewCtrl.dismiss();
         this.afAuth.authState.subscribe(auth => {
             this.towRequestService.updatePickupFlag(this.towRequestId, auth.uid);
         })

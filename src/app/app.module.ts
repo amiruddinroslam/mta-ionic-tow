@@ -13,6 +13,7 @@ import { ProfilePage } from '../pages/profile/profile';
 import { NearbyWorkshopPage } from '../pages/nearby-workshop/nearby-workshop';
 import { TowRequestPage } from '../pages/tow-request/tow-request';
 import { TowRequestConfirmationPage } from '../pages/tow-request/tow-request-confirmation/towRequestConfirmation';
+import { HistoryPage } from '../pages/history/history';
 
 import { StatusBar } from '@ionic-native/status-bar';
 import { SplashScreen } from '@ionic-native/splash-screen';
@@ -32,7 +33,6 @@ import { AngularFirestoreModule } from 'angularfire2/firestore';
 import { credentials } from './config';
 import { Firebase } from '@ionic-native/firebase';
 import { FcmProvider } from '../providers/fcm/fcm';
-import { HistoryPage } from '../pages/history/history';
 
 @NgModule({
   declarations: [

@@ -1,12 +1,12 @@
 import { TabsPage } from './../tabs/tabs';
 import { AuthService } from './../../services/auth';
 import { Component, trigger, state, style, transition, animate, keyframes } from '@angular/core';
-import { IonicPage, NavController, NavParams, LoadingController, ToastController, Tabs } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, LoadingController, ToastController, Tabs, AlertController } from 'ionic-angular';
 import { NgForm } from '@angular/forms';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { AngularFireDatabase } from 'angularfire2/database';
 import { Firebase } from '@ionic-native/firebase';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { Observable } from 'rxjs/Observable';
 
 
 @IonicPage()
@@ -70,9 +70,12 @@ export class LoginPage {
   loginState: any = "in";
   formState: any = "in";
 
+  user: Observable<any>;
+
   constructor(public navCtrl: NavController, private authService: AuthService,
   private loadingCtrl: LoadingController, private toastCtrl: ToastController,
-  private firebaseNative: Firebase, private afAuth: AngularFireAuth, private afs: AngularFirestore) {
+  private firebaseNative: Firebase, private afAuth: AngularFireAuth,
+  private db: AngularFireDatabase, private alertCtrl: AlertController) {
   }
 
   onLogin(form: NgForm) {
@@ -86,9 +89,24 @@ export class LoginPage {
 			duration: 2000
     });
 
+    const alertUser = this.alertCtrl.create({
+      title: 'Error',
+      message: 'This app is only for towing service provider use. For customer, please use Mobile Tow Assist.',
+      buttons: ['Ok']
+    });
+
     this.authService.login(form.value.email, form.value.password)
     .then(data => {
-      //this.getToken();
+      this.afAuth.authState.subscribe(auth => {
+        this.user = this.db.object(`user/${auth.uid}`).valueChanges();
+        this.user.subscribe(res => {
+          if (res.role != 2) {
+            alertUser.present();
+            this.authService.logout();
+            this.navCtrl.setRoot(LoginPage);
+          }
+        })
+			});
       loading.dismiss();
       this.navCtrl.setRoot(TabsPage);
     })
@@ -97,55 +115,5 @@ export class LoginPage {
       toast.present();
     })
   }
-
-  // async getToken() {
-  //   let token;
-
-  //     token = await this.firebaseNative.getToken();
-
-  //   return this.saveTokenToDatabase(token);
-  // }
-
-  // private getUserId() {
-  //   let uid;
-  //   this.afAuth.authState.subscribe(auth =>{
-  //       uid = auth.uid;
-  //   });
-
-  //   return uid;
-  // }
-
-  // //save token to db
-  // private saveTokenToDatabase(token) {
-  //   if(!token) return;
-
-  //   const devicesRef = this.afs.collection('devices')
-
-  //   const docData = {
-  //     token,
-  //     userId: this.getUserId()
-  //   }
-
-  //   return devicesRef.doc(token).set(docData);
-  // }
-
-  // async getToken() {
-  //   let token;
-  //   token = this.firebaseNative.getToken();
-  //   console.log(token);
-
-  //   this.afAuth.authState.subscribe(auth => {
-  //     //const userRef = this.db.object(`user/${auth.uid}`);
-  //     console.log(auth.uid);
-  //     const userRef = this.afs.collection('devices');
-
-  //     const data = {
-  //       token,
-  //       userId: auth.uid
-  //     };
-
-  //     userRef.doc(token).set(data);
-  //   })
-  // }
 
 }

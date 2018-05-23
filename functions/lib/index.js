@@ -11,16 +11,36 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
-exports.newTowRequest = functions.firestore
-    .document('towRequest/{towRequestId}')
-    .onWrite((event) => __awaiter(this, void 0, void 0, function* () {
-    const data = event.after.data();
+// exports.newTowRequest = functions.firestore
+// .document('towRequest/{towRequestId}')
+// .onWrite(async event => {
+//     const data = event.after.data();
+//     const userId = data.userId;
+//     const payload = {
+//         notification: {
+//             title: 'New Tow Request',
+//             body: 'A new tow request nearby your location!',
+//         }
+//     }
+//     const db = admin.firestore()
+//     const devicesRef = db.collection('devices');
+//     const devices = await devicesRef.get();
+//     const tokens = [];
+//     devices.forEach(result => {
+//         const token = result.data().token;
+//         tokens.push(token)
+//     })
+//     return admin.messaging().sendToDevice(tokens, payload);
+// })
+exports.newTowRequest = functions.database
+    .ref('towRequest/{towRequestId}')
+    .onCreate((snap, context) => __awaiter(this, void 0, void 0, function* () {
+    const data = snap.val();
     const userId = data.userId;
     const payload = {
         notification: {
             title: 'New Tow Request',
             body: 'A new tow request nearby your location!',
-            icon: 'https://ibb.co/bsoZG7'
         }
     };
     const db = admin.firestore();

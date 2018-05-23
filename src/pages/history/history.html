@@ -1,6 +1,11 @@
 <ion-header>
 
   <ion-navbar color="primary">
+    <ion-buttons left>
+      <button ion-button menuToggle>
+        <ion-icon name="menu"></ion-icon>
+      </button>
+    </ion-buttons>
     <ion-title>Tow History</ion-title>
   </ion-navbar>
 
@@ -8,6 +13,11 @@
 
 
 <ion-content padding>
+  <ion-card>
+    <ion-card-content>
+      <strong>Collected Payments: RM {{ sum }}</strong>
+    </ion-card-content>
+  </ion-card>
   <ion-list>
     <button ion-item *ngFor="let tow of towReq | async; let i = index" (click)="detail(tow.key)"><ion-icon name="time" item-start></ion-icon>{{ tow.timeDate }}</button>
   </ion-list>

@@ -14,11 +14,14 @@ export class HistoryPage {
 
   towReqRef: AngularFireList<any>;
   towReq: Observable<any[]>;
+  towReq2: Observable<any[]>;
 
   towReqByKeyRef: AngularFireObject<any>;
   towReqByKey: Observable<any>;
 
   uid: string;
+  totalPayments = [];
+  sum = 0;
 
   constructor(public navCtrl: NavController, public navParams: NavParams,
     private db: AngularFireDatabase, private afAuth: AngularFireAuth, private alertCtrl: AlertController) {
@@ -31,6 +34,8 @@ export class HistoryPage {
             changes.map(c => ({ key: c.payload.key, ...c.payload.val() }))
           )
         );
+        this.towReq2 = this.towReqRef.valueChanges();
+        this.getTotalCollectedPayments();
       });
   }
 
@@ -44,13 +49,36 @@ export class HistoryPage {
                 +'<br>Problem: '+res.problem
                 +'<br>Status: '+res.status
                 +'<br>Total Payment: '+res.totalPayment,
-        buttons: ["OK"]
+        buttons: ['OK']
       }).present();
-    })
-
+    });
   }
 
+  getTotalCollectedPayments() {
+    this.towReq2.subscribe(reqs => {
+      reqs.forEach(req => {
+        this.totalPayments.push(req.totalPayment);
+      });
+      this.totalPayments = this.filter_array(this.totalPayments);
+      this.sum = this.totalPayments.reduce((acc, val) => { return acc + val });
+    });
+  }
 
+  filter_array(test_array) {
+    let index = -1;
+    const arr_length = test_array ? test_array.length : 0;
+    let resIndex = -1;
+    const result = [];
+
+    while (++index < arr_length) {
+        const value = test_array[index];
+
+        if (value) {
+            result[++resIndex] = +value;
+        }
+    }
+    return result;
+  }
 
 
 }

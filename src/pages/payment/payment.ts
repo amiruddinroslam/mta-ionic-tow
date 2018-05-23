@@ -24,12 +24,13 @@ export class PaymentPage {
     this.key = this.navParams.get("key");
     this.towReqRef = this.db.object('towRequest/'+this.key);
     this.towReq = this.towReqRef.valueChanges();
+    this.getTotalDuration();
   }
 
   getTotalDuration() {
     this.towReq.subscribe(res => {
-      this.totalDistance = res.distance;
-      this.totalPrice = ((+this.totalDistance)/(1000)) * 15;
+      this.totalDistance = (+res.distance/1000);
+      this.totalPrice = (+this.totalDistance) * 17;
       this.totalPrice = +this.totalPrice.toFixed(2);
       console.log(this.totalPrice);
     });

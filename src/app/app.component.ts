@@ -35,24 +35,8 @@ export class MyApp {
       // Okay, so the platform is ready and our plugins are available.
       // Here you can do any higher level native things you might need.
       console.log('Platform is ready');
-      // this.fcm.subscribeToTopic('all');
-      // this.fcm.getToken().then(token => {
-      //   // backend.registerToken(token);
-      // });
-      // this.fcm.onNotification().subscribe(data => {
-      //   alert('message received')
-      //   if(data.wasTapped) {
-      //   console.info("Received in background");
-      //   } else {
-      //   console.info("Received in foreground");
-      //   };
-      // });
-      // this.fcm.onTokenRefresh().subscribe(token => {
-      //   // backend.registerToken(token);
-      // });
       statusBar.styleDefault();
       splashScreen.hide();
-      // ).subscribe()
     });
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {

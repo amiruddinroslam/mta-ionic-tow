@@ -236,7 +236,7 @@ export class HomePage implements OnInit{
 
 	pickupCar() {
 		//console.log('arrived');
-
+		this.isArrived = true;
 		const alertPickup = this.alertCtrl.create({
 			title: "Pick up customer's vehicle",
 			message: "confirm that you have pick up customer's vehicle?",
@@ -274,7 +274,7 @@ export class HomePage implements OnInit{
 
 		this.towRequest.subscribe(res => {
 			if(res.status == "arrived_at_user") {
-				setTimeout(()=> { alertPickup.present(); }, 2500);
+				setTimeout(()=> { alertPickup.present(); }, 3000);
 				// alertPickup.present();
 			}
 		});
@@ -282,7 +282,7 @@ export class HomePage implements OnInit{
 	}
 
 	complete() {
-		
+		this.isCompleted = true;
 		const alert = this.alertCtrl.create({
 			title: 'Confirmation',
 			message: "Confirm that you arrived at workshop location?",

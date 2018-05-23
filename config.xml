@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget id="com.amiruddin.mtatow" version="0.0.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
-    <name>Mobile Tow Assist (Tow)</name>
+<widget id="com.amiruddin.mtatow" version="1.0.0" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>Mobile Tow Assist (Professionals)</name>
     <description>Mobile Tow Assist Apps for Tow Service Provider.</description>
     <author email="mamiruddin34@gmail.com" href="http://ionicframework.com/">Muhammad Amiruddin</author>
     <content src="index.html" />
@@ -21,6 +21,7 @@
     <preference name="SplashScreenDelay" value="3000" />
     <preference name="loadUrlTimeoutValue" value="60000" />
     <preference name="ShowSplashScreenSpinner" value="false" />
+    <preference name="AutoHideSplashScreen" value="false" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -90,5 +91,6 @@
     <plugin name="cordova-plugin-ionic-webview" spec="^1.1.19" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
     <plugin name="cordova-plugin-firebase" spec="^1.0.0" />
+    <allow-navigation href="http://192.168.8.102:8100" />
     <engine name="android" spec="7.0.0" />
 </widget>

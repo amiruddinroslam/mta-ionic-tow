@@ -19,12 +19,12 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-          <button class="request-btn" ion-button full (click)="pickupCar()" *ngIf="!isArrived">Arrive at User Location</button>
+          <button class="request-btn" ion-button full (click)="pickupCar()" [disabled]="isArrived">Arrive at User Location</button>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-          <button class="request-btn" ion-button full color="secondary" (click)="complete()" *ngIf="!isCompleted">Arrive at Workshop</button>
+          <button class="request-btn" ion-button full color="secondary" (click)="complete()" [disabled]="!isArrived">Arrive at Workshop</button>
       </ion-col>
     </ion-row>
   </ion-grid>
